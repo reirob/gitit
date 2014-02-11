@@ -8,7 +8,7 @@ module Dot (plugin) where
 -- ~~~
 --
 -- The "dot" executable must be in the path.
--- The generated png file will be saved in the static img directory.
+-- The generated svg file will be saved in the static img directory.
 -- If no name is specified, a unique name will be generated from a hash
 -- of the file contents.
 
@@ -29,10 +29,10 @@ transformBlock :: Block -> PluginM Block
 transformBlock (CodeBlock (_, classes, namevals) contents) | "dot" `elem` classes = do
   cfg <- askConfig
   let (name, outfile) =  case lookup "name" namevals of
-                                Just fn   -> ([Str fn], fn ++ ".png")
-                                Nothing   -> ([], uniqueName contents ++ ".png")
+                                Just fn   -> ([Str fn], fn ++ ".svg")
+                                Nothing   -> ([], uniqueName contents ++ ".svg")
   liftIO $ do
-    (ec, _out, err) <- readProcessWithExitCode "dot" ["-Tpng", "-o",
+    (ec, _out, err) <- readProcessWithExitCode "dot" ["-Tsvg", "-o",
                          staticDir cfg </> "img" </> outfile] contents
     if ec == ExitSuccess
        then return $ Para [Image name ("/img" </> outfile, "")]
